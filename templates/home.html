@@ -4,18 +4,33 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>ne0_p2p - Soberania Financeira Através do Seu Esforço</title>
-    <!-- Cache-buster para forçar reload do CSS -->
+
+    <!-- CSS principal (cache-buster) -->
     <link rel="stylesheet" href="/static/css/style.css?v=1.5">
+    <!-- CSS responsivo: o ficheiro que contém os ajustes mobile/global -->
+    <link rel="stylesheet" href="/static/css/responsive.css?v=1.0">
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@1,400;1,500&display=swap" rel="stylesheet" />
 </head>
-<body>
+<body class="home-page">
 
 <header class="home-header">
     <div class="container">
         <nav>
             <a href="/" class="logo">ne0_p2p</a>
+
+            <!-- BOTÃO HAMBURGER: coloque-o aqui, após a logo e antes da ul.nav-menu -->
+            <button class="mobile-nav-toggle" aria-label="Abrir menu">
+                <!-- ícone simples: três barras -->
+                <svg width="20" height="14" viewBox="0 0 20 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <rect width="20" height="2" y="0" rx="1" fill="currentColor"></rect>
+                    <rect width="20" height="2" y="6" rx="1" fill="currentColor"></rect>
+                    <rect width="20" height="2" y="12" rx="1" fill="currentColor"></rect>
+                </svg>
+            </button>
+
             <ul class="nav-menu">
                 <li><a href="/" class="active">Home</a></li>
                 <li><a href="/offers">Ofertas P2P</a></li>
@@ -28,20 +43,12 @@
 
 <section class="video-hero-container">
     <div class="video-background">
-        <!--
-            Use um ficheiro local para evitar hotlinking / bloqueios.
-            Coloque o MP4 em: static/videos/farmer-pulling-weeds-10041435.mp4
-            Defina poster="/static/images/home-poster.jpg" se tiver uma imagem estática.
-        -->
         <video autoplay muted loop playsinline poster="/static/images/home-poster.jpg">
             <source src="/static/videos/10041435-hd_1080_1920_24fps.mp4" type="video/mp4">
             O seu navegador não suporta vídeos HTML5.
         </video>
     </div>
-
-    <!-- overlay para garantir legibilidade (ajustável via CSS patch) -->
     <div class="video-overlay"></div>
-
     <div class="manifesto-content">
         <h1>O que é seu, é seu.</h1>
         <p class="subtitulo">Proteja o património da sua família e o valor do seu trabalho.</p>
@@ -59,9 +66,21 @@
         </p>
 
         <section class="cta-grid">
-            <div class="cta-card"><h3>Ofertas P2P</h3><p>Negoceie diretamente com outras pessoas, de forma privada e segura. Máximo controlo.</p><a href="/offers" class="button">Explorar Ofertas</a></div>
-            <div class="cta-card"><h3>Compra Direta</h3><p>A forma mais rápida de adquirir Bitcoin para a sua carteira, com conveniência e simplicidade.</p><a href="/buy-chimera-no-kyc" class="button">Comprar Agora</a></div>
-            <div class="cta-card"><h3>Carteiras</h3><p>Aprenda a guardar o seu património de forma soberana. As suas chaves, o seu Bitcoin.</p><a href="/wallets" class="button">Proteger o Meu Valor</a></div>
+            <div class="cta-card">
+                <h3>Ofertas P2P</h3>
+                <p>Negoceie diretamente com outras pessoas, de forma privada e segura. Máximo controlo.</p>
+                <a href="/offers" class="button">Explorar Ofertas</a>
+            </div>
+            <div class="cta-card">
+                <h3>Compra Direta</h3>
+                <p>A forma mais rápida de adquirir Bitcoin para a sua carteira, com conveniência e simplicidade.</p>
+                <a href="/buy-chimera-no-kyc" class="button">Comprar Agora</a>
+            </div>
+            <div class="cta-card">
+                <h3>Carteiras</h3>
+                <p>Aprenda a guardar o seu património de forma soberana. As suas chaves, o seu Bitcoin.</p>
+                <a href="/wallets" class="button">Proteger o Meu Valor</a>
+            </div>
         </section>
     </main>
 
@@ -72,5 +91,7 @@
     </footer>
 </div>
 
+<!-- Script do menu móvel (colocar antes do fechamento do body) -->
+<script src="/static/js/mobile-nav.js"></script>
 </body>
 </html>

@@ -4,10 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chimera: Compra Direta de Bitcoin - ne0_p2p</title>
-    <link rel="stylesheet" href="/static/css/style.css?v=1.1">
+
+    <!-- CSS principal e responsivo -->
+    <link rel="stylesheet" href="/static/css/style.css?v=1.5">
+    <link rel="stylesheet" href="/static/css/responsive.css?v=1.0">
+
     <style>
+        /* Regras locais para o widget Kado - tornam o iframe responsivo */
         .buy-container {
-            max-width: 500px;
+            max-width: 700px;
             margin: 0 auto;
             padding-top: 2rem;
         }
@@ -18,14 +23,32 @@
             border-radius: 16px;
             box-shadow: 0 10px 30px rgba(var(--shadow-color), 0.15);
         }
+        /* Ajustes mobile */
+        @media (max-width: 800px) {
+            .buy-container { padding-top: 1.25rem; }
+            #kado-widget { height: 60vh; min-height: 420px; }
+        }
+        @media (max-width: 480px) {
+            #kado-widget { height: 56vh; min-height: 360px; }
+        }
     </style>
 </head>
-<body>
+<body class="chimera-page">
 
 <header>
     <div class="container">
         <nav>
             <a href="/" class="logo">ne0_p2p</a>
+
+            <!-- BOTÃO HAMBURGER -->
+            <button class="mobile-nav-toggle" aria-label="Abrir menu">
+                <svg width="20" height="14" viewBox="0 0 20 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <rect width="20" height="2" y="0" rx="1" fill="currentColor"></rect>
+                    <rect width="20" height="2" y="6" rx="1" fill="currentColor"></rect>
+                    <rect width="20" height="2" y="12" rx="1" fill="currentColor"></rect>
+                </svg>
+            </button>
+
             <ul class="nav-menu">
                 <li><a href="/">Ofertas P2P</a></li>
                 <li><a href="/wallets">Carteiras</a></li>
@@ -42,7 +65,7 @@
     </section>
 
     <div class="buy-container">
-        <iframe id="kado-widget" title="Kado Widget"></iframe>
+        <iframe id="kado-widget" title="Kado Widget" src=""></iframe>
     </div>
 </main>
 
@@ -53,6 +76,7 @@
 </footer>
 
 <script>
+    // Inicializa o widget Kado (coloque a sua API key e referral)
     document.addEventListener('DOMContentLoaded', () => {
         const kadoWidget = document.getElementById('kado-widget');
         const apiKey = 'SUA_API_KEY_DO_KADO_AQUI';
@@ -64,5 +88,7 @@
     });
 </script>
 
+<!-- mobile nav script -->
+<script src="/static/js/mobile-nav.js"></script>
 </body>
 </html>

@@ -182,3 +182,118 @@ footer p { color: var(--text-secondary); }
     .manifesto-content h1 { font-size: 2rem; }
     .manifesto-content .genesis-quote { font-size: 1.05rem; }
 }
+
+
+/* ===========================
+   Ajustes responsivos para mobile
+   Cole isto no fim de static/css/style.css
+   =========================== */
+
+/* Tipografia fluida e regras para tablets / mobile */
+:root {
+    /* valores opcionais para ajuste fino no mobile */
+    --hero-mobile-height: 70vh;
+    --hero-mobile-height-tight: 60vh;
+}
+
+/* Ajustes gerais para ecrãs até 800px (tablets e phones grandes) */
+@media (max-width: 800px) {
+    .video-hero-container {
+        height: var(--hero-mobile-height);
+    }
+
+    /* Garante que o header absoluto não sobrepõe o conteúdo principal */
+    .manifesto-content {
+        padding: 1.25rem;
+        max-width: 92%;
+        margin-top: 2.5rem; /* evita sobreposição do header */
+    }
+
+    /* H1 escalável e mais curto no mobile */
+    .manifesto-content h1 {
+        font-size: clamp(1.8rem, 6.5vw, 2.6rem);
+        line-height: 1.08;
+        margin-bottom: 0.75rem;
+    }
+
+    .manifesto-content .subtitulo {
+        font-size: clamp(0.98rem, 3.5vw, 1.1rem);
+        margin-bottom: 1.25rem;
+    }
+
+    .manifesto-content .genesis-quote {
+        font-size: clamp(1rem, 3.8vw, 1.15rem);
+        padding: 1rem;
+        max-width: 100%;
+        border-left-width: 3px;
+    }
+
+    /* Cartões empilhados e mais compactos */
+    .cta-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 2rem 0;
+    }
+    .cta-card {
+        padding: 1.5rem;
+        border-radius: 12px;
+    }
+
+    /* Mais espaço interno no main para leitura */
+    .content-wrapper main.container { padding-top: 2.5rem; padding-bottom: 3rem; }
+}
+
+/* Ajustes finos para ecrãs até 480px (phones) */
+@media (max-width: 480px) {
+    .video-hero-container { height: var(--hero-mobile-height-tight); }
+
+    .manifesto-content {
+        padding: 0.9rem;
+        max-width: 96%;
+        margin-top: 1.75rem;
+    }
+
+    .manifesto-content h1 {
+        font-size: clamp(1.4rem, 7.5vw, 2.2rem);
+        margin-bottom: 0.6rem;
+    }
+
+    .manifesto-content .subtitulo {
+        font-size: 0.95rem;
+        margin-bottom: 1rem;
+    }
+
+    .manifesto-content .genesis-quote {
+        font-size: 1rem;
+        padding: 0.9rem;
+        line-height: 1.45;
+    }
+
+    /* Ajusta overlay para leitura em ecrãs pequenos (um pouco mais escuro para contraste) */
+    .video-overlay {
+        background-color: rgba(0,0,0,0.55);
+    }
+
+    /* Reduz altura do nav e evita sobreposição se for absolute */
+    nav { height: 64px; }
+    .home-header { height: 64px; }
+
+    /* Pequenos ajustes para loaders / elementos de listagem */
+    .hero { padding: 4.5rem 1rem 3rem; }
+}
+
+/* Assegura que video e poster cobrem corretamente em todos os tamanhos */
+.video-background video,
+.video-background img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Melhora legibilidade do manifesto em telas pequenas: sombra sutil */
+.manifesto-content h1,
+.manifesto-content .genesis-quote,
+.manifesto-content .subtitulo {
+    text-shadow: 0 2px 8px rgba(0,0,0,0.35);
+}

@@ -1,0 +1,181 @@
+/* Responsividade global para app - coloque este ficheiro em static/css/responsive.css
+   Breakpoints: 1024px (desktop->tablet), 800px (tablet->mobile), 480px (phones pequenos)
+*/
+
+/* Pequenos ajustes do container */
+.container { padding-left: 1.25rem; padding-right: 1.25rem; }
+
+/* ============================
+   NAV / HEADER
+   ============================ */
+.mobile-nav-toggle {
+    display: none;
+    background: transparent;
+    border: 0;
+    color: var(--text-primary);
+    font-size: 1.35rem;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+}
+
+/* menu normal desktop */
+.nav-menu {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+/* ============================
+   HERO / VIDEO / MANIFESTO
+   ============================ */
+.video-background video,
+.video-background img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* fallback: alturas mais amigáveis em tablets */
+@media (max-width: 1024px) {
+    .video-hero-container {
+        height: 80vh;
+    }
+    .manifesto-content { padding: 1.25rem; max-width: 780px; }
+}
+
+/* tablets e phones grandes */
+@media (max-width: 800px) {
+    .video-hero-container {
+        height: 72vh;
+    }
+
+    .manifesto-content h1 {
+        font-size: clamp(1.9rem, 6.5vw, 2.6rem);
+        line-height: 1.08;
+        margin-bottom: 0.6rem;
+        text-shadow: 0 2px 8px rgba(0,0,0,0.35);
+    }
+    .manifesto-content .subtitulo {
+        font-size: clamp(0.95rem, 3.2vw, 1.15rem);
+        margin-bottom: 1rem;
+        text-shadow: 0 1px 6px rgba(0,0,0,0.28);
+    }
+    .manifesto-content .genesis-quote {
+        font-size: clamp(1rem, 3.6vw, 1.15rem);
+        padding: 1rem;
+        max-width: 100%;
+        line-height: 1.5;
+    }
+}
+
+/* phones pequenos */
+@media (max-width: 480px) {
+    .video-hero-container {
+        height: 60vh;
+    }
+    .manifesto-content {
+        padding: 0.9rem;
+        max-width: 96%;
+        margin-top: 1.6rem;
+    }
+    .manifesto-content h1 {
+        font-size: clamp(1.4rem, 7.5vw, 2.2rem);
+        margin-bottom: 0.45rem;
+    }
+    .manifesto-content .subtitulo { font-size: 0.95rem; }
+    .manifesto-content .genesis-quote { font-size: 0.98rem; padding: 0.9rem; line-height: 1.45; }
+
+    .video-overlay { background-color: rgba(0,0,0,0.55); }
+    nav { height: 64px; }
+    .home-header { height: 64px; }
+}
+
+/* ============================
+   CTA GRID / CARDS / LISTAS
+   ============================ */
+.cta-grid, #offers-container, .product-grid {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+@media (max-width: 1024px) {
+    .cta-grid, #offers-container, .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 800px) {
+    .cta-grid, #offers-container, .product-grid {
+        grid-template-columns: 1fr;
+        gap: 0.9rem;
+    }
+    .cta-card, .offer-card, .product-card {
+        padding: 1.25rem;
+        border-radius: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .cta-card h3, .product-header h3 { font-size: 1.1rem; }
+    .cta-card p, .offer-card .details, .product-description { font-size: 0.95rem; }
+}
+
+/* ============================
+   FILTROS / DROPDOWNS
+   ============================ */
+.filters {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.filters > div { min-width: 180px; flex: 1 1 180px; }
+
+@media (max-width: 800px) {
+    .filters { flex-direction: column; align-items: stretch; padding: 1rem 0; }
+    .filters > div { width: 100%; }
+    .custom-dropdown { width: 100%; }
+}
+
+/* ============================
+   MODALS / LOADERS / NO-OFFERS
+   ============================ */
+.modal-content { width: 90%; max-width: 520px; padding: 1.5rem; }
+@media (max-width: 480px) {
+    .modal-content { padding: 1rem; width: 94%; }
+    .modal-info-list li { gap: 0.6rem; }
+}
+
+/* ============================
+   HEADER / NAV - comportamento mobile
+   ============================ */
+@media (max-width: 800px) {
+    .nav-menu { display: none; position: absolute; top: 64px; right: 1.25rem; background: var(--bg-surface); width: calc(100% - 2.5rem); border-radius: 12px; padding: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.12); z-index: 3000; flex-direction: column; gap: 0.5rem; }
+    .nav-menu.show { display: flex; }
+    .mobile-nav-toggle { display: inline-flex; }
+    header nav { align-items: center; }
+    .logo { margin-right: auto; }
+}
+
+/* ============================
+   TIPOGRAFIA E TOUCH TARGETS
+   ============================ */
+@media (max-width: 800px) {
+    body { font-size: 15px; }
+    .container { padding-left: 1rem; padding-right: 1rem; }
+    .button, .side-button, .dropdown-button, .modal-button { min-height: 44px; padding: 0.7rem 1rem; }
+}
+@media (max-width: 480px) {
+    body { font-size: 14px; }
+}
+
+/* Overflow / image scaling fixes */
+img, video { max-width: 100%; height: auto; }
+.content-wrapper { overflow: visible; }

@@ -4,14 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ofertas P2P - ne0_p2p</title>
-    <link rel="stylesheet" href="/static/css/style.css?v=1.1">
+
+    <!-- CSS principal e responsivo -->
+    <link rel="stylesheet" href="/static/css/style.css?v=1.5">
+    <link rel="stylesheet" href="/static/css/responsive.css?v=1.0">
 </head>
-<body>
+<body class="offers-page">
 
 <header>
     <div class="container">
         <nav>
             <a href="/" class="logo">ne0_p2p</a>
+
+            <!-- BOTÃO HAMBURGER -->
+            <button class="mobile-nav-toggle" aria-label="Abrir menu">
+                <svg width="20" height="14" viewBox="0 0 20 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <rect width="20" height="2" y="0" rx="1" fill="currentColor"></rect>
+                    <rect width="20" height="2" y="6" rx="1" fill="currentColor"></rect>
+                    <rect width="20" height="2" y="12" rx="1" fill="currentColor"></rect>
+                </svg>
+            </button>
+
             <ul class="nav-menu">
                 <li><a href="/offers" class="active">Ofertas P2P</a></li>
                 <li><a href="/wallets">Carteiras</a></li>
@@ -84,6 +97,9 @@
         </div>
     </div>
 </div>
+
+<!-- script do menu móvel (deve existir em /static/js/mobile-nav.js) -->
+<script src="/static/js/mobile-nav.js"></script>
 
 <script>
     const offersContainer = document.getElementById('offers-container');
