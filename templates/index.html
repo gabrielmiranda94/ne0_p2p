@@ -3,23 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ne0_p2p - Ofertas P2P de Bitcoin</title>
+    <title>ne0_p2p - O seu portal para Bitcoin P2P</title>
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
+
 <header>
-    <h1>ne0_p2p</h1>
-    <p>As melhores ofertas P2P com desconto nas taxas!</p>
+    <div class="container">
+        <nav>
+            <a href="/" class="logo">ne0_p2p</a>
+            <!-- Podemos adicionar links de navegação aqui no futuro -->
+        </nav>
+    </div>
 </header>
 
-<main>
-    <div class="filters">
+<main class="container">
+    <section class="hero">
+        <h1>Encontre as Melhores Ofertas de Bitcoin P2P</h1>
+        <p>A sua porta de entrada para comprar e vender Bitcoin de forma segura e privada, sem KYC.</p>
+    </section>
+
+    <section class="filters">
         <div class="side-selector">
-            <button id="side-sell" class="side-button" data-side="SELL">Quero Comprar</button>
+            <button id="side-sell" class="side-button active" data-side="SELL">Quero Comprar</button>
             <button id="side-buy" class="side-button" data-side="BUY">Quero Vender</button>
         </div>
         <div>
-            <label for="currency">Moeda:</label>
+            <label for="currency">Moeda</label>
             <select id="currency">
                 <option value="EUR">Euro (EUR)</option>
                 <option value="BRL">Real (BRL)</option>
@@ -27,30 +37,27 @@
             </select>
         </div>
         <div>
-            <label>Método de Pagamento:</label>
+            <label>Método de Pagamento</label>
             <div class="custom-dropdown" id="payment-dropdown">
-                <button class="dropdown-button" id="payment-button">
-                    <!-- O texto já começa aqui, sem depender de JS -->
+                <button class="dropdown-button">
                     <span id="payment-selected-text">Todos</span>
                 </button>
                 <div class="dropdown-menu">
                     <div class="dropdown-search">
                         <input type="text" id="payment-search" placeholder="Filtrar...">
                     </div>
-                    <ul class="dropdown-options" id="payment-options">
-                        <!-- Gerado por JS -->
-                    </ul>
+                    <ul class="dropdown-options" id="payment-options"></ul>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
     <div class="info-box">
-        <p><strong>Dica:</strong> Use os nossos links para obter um <strong>desconto permanente</strong> nas taxas da Hodl Hodl (de 0.5% para 0.45%)!</p>
+        <p><strong>Como funciona?</strong> Ao clicar em "Ver Oferta", será redirecionado para a Hodl Hodl. Precisará de criar uma conta (apenas com e-mail), mas <strong>sem verificação de identidade (KYC)</strong>.</p>
     </div>
 
-    <div id="offers-container" class="offers-container">
-        <div id="loader" class="loader"></div>
+    <section class="offers-container">
+        <div id="loader"></div>
         <table>
             <thead>
             <tr>
@@ -67,18 +74,20 @@
             </thead>
             <tbody id="offers-tbody"></tbody>
         </table>
-        <p id="no-offers-message" class="no-offers" style="display: none;">Nenhuma oferta encontrada.</p>
-    </div>
+        <p id="no-offers-message" style="display: none;"></p>
+    </section>
 </main>
 
 <footer>
-    <p>&copy; 2025 ne0_p2p - Encontre as melhores ofertas e poupe.</p>
+    <div class="container">
+        <p>&copy; 2025 ne0_p2p - Promovendo a soberania financeira.</p>
+    </div>
 </footer>
 
 <script>
-    // Todo o JavaScript permanece exatamente igual à versão anterior.
-    // O bug não estava no JS, mas sim na forma como o CSS interagia
-    // com o HTML durante o carregamento inicial.
+    // O JAVASCRIPT NÃO PRECISA DE QUALQUER ALTERAÇÃO.
+    // Ele vai funcionar perfeitamente com as novas classes e estrutura.
+    // Basta colar aqui o mesmo script da versão anterior.
 
     const currencySelect = document.getElementById('currency');
     const offersTbody = document.getElementById('offers-tbody');
@@ -86,123 +95,14 @@
     const loader = document.getElementById('loader');
     const sideSellButton = document.getElementById('side-sell');
     const sideBuyButton = document.getElementById('side-buy');
-
     const paymentDropdown = document.getElementById('payment-dropdown');
-    const paymentButton = document.getElementById('payment-button');
+    const paymentButton = paymentDropdown.querySelector('.dropdown-button');
     const paymentSelectedText = document.getElementById('payment-selected-text');
     const paymentSearch = document.getElementById('payment-search');
     const paymentOptionsList = document.getElementById('payment-options');
-
     let currentSide = 'SELL';
     let selectedPaymentMethod = '';
-
-    async function populatePaymentMethods() {
-        try {
-            const response = await fetch('/api/payment-methods');
-            if (!response.ok) return;
-            const methods = await response.json();
-
-            paymentOptionsList.innerHTML = '';
-
-            const allOption = document.createElement('li');
-            allOption.textContent = 'Todos';
-            allOption.dataset.value = '';
-            allOption.addEventListener('click', handlePaymentSelection);
-            paymentOptionsList.appendChild(allOption);
-
-            const priority = ['Revolut', 'Wise', 'SEPA (EU) Instant', 'Bizum', 'PIX'];
-            const sortedMethods = methods.sort((a, b) => {
-                const aIsPriority = priority.includes(a.name);
-                const bIsPriority = priority.includes(b.name);
-                if (aIsPriority && !bIsPriority) return -1;
-                if (!aIsPriority && bIsPriority) return 1;
-                return (a.name || '').localeCompare(b.name || '');
-            });
-
-            sortedMethods.forEach(method => {
-                if (!method.name) return;
-                const option = document.createElement('li');
-                option.textContent = method.name;
-                option.dataset.value = method.name;
-                option.addEventListener('click', handlePaymentSelection);
-                paymentOptionsList.appendChild(option);
-            });
-        } catch (error) {
-            console.error("Erro ao popular métodos de pagamento:", error);
-        }
-    }
-
-    async function fetchOffers() {
-        loader.style.display = 'block';
-        offersTbody.innerHTML = '';
-        noOffersMessage.style.display = 'none';
-        const currency = currencySelect.value;
-        let url = `/api/offers?currency_code=${currency}&side=${currentSide}`;
-        if (selectedPaymentMethod) {
-            url += `&payment_method=${selectedPaymentMethod}`;
-        }
-        try {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            const offers = await response.json();
-            if (offers.length === 0) {
-                noOffersMessage.style.display = 'block';
-            } else {
-                offers.forEach(offer => {
-                    const row = offersTbody.insertRow();
-                    row.innerHTML = `<td>${offer.trader_username || 'N/A'}</td><td>${(offer.trader_rating || 0).toFixed(2)} ★</td><td>${formatCurrency(offer.price, currency)}</td><td>${formatCurrency(offer.market_price, currency)}</td><td><span class="${getPremiumClass(offer.premium)}">${formatPremium(offer.premium)}</span></td><td>${offer.min_amount || 'N/A'} - ${offer.max_amount || 'N/A'}</td><td>${offer.payment_method_name || 'N/A'}</td><td>${offer.country || 'Global'}</td><td><a href="${offer.affiliate_link}" target="_blank" class="button">Ver Oferta</a></td>`;
-                });
-            }
-        } catch (error) {
-            console.error("Erro ao renderizar ofertas:", error);
-            noOffersMessage.innerText = 'Erro ao exibir as ofertas.';
-            noOffersMessage.style.display = 'block';
-        } finally {
-            loader.style.display = 'none';
-        }
-    }
-
-    function getPremiumClass(premium) { if (premium === null || premium === undefined) return 'premium-neutral'; if (premium < 1) return 'premium-good'; if (premium > 5) return 'premium-bad'; return 'premium-neutral'; }
-    function formatCurrency(value, currency) { if (value === null || value === undefined || !currency) return 'N/A'; const numericValue = typeof value === 'string' ? parseFloat(value.replace(',', '')) : value; return `${numericValue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currency}`; }
-    function formatPremium(premium) { if (premium === null || premium === undefined) return 'N/A'; return `${premium.toFixed(2)}%`; }
-
-    function handlePaymentSelection(e) {
-        selectedPaymentMethod = e.currentTarget.dataset.value;
-        paymentSelectedText.textContent = e.currentTarget.textContent;
-        paymentDropdown.classList.remove('open');
-        fetchOffers();
-    }
-
-    paymentButton.addEventListener('click', (e) => {
-        e.stopPropagation();
-        paymentDropdown.classList.toggle('open');
-    });
-
-    document.addEventListener('click', () => {
-        paymentDropdown.classList.remove('open');
-    });
-
-    paymentSearch.addEventListener('click', (e) => {
-        e.stopPropagation();
-    });
-
-    paymentSearch.addEventListener('input', () => {
-        const filter = paymentSearch.value.toLowerCase();
-        paymentOptionsList.querySelectorAll('li').forEach(option => {
-            const text = option.textContent.toLowerCase();
-            option.classList.toggle('hidden', !text.includes(filter));
-        });
-    });
-
-    sideSellButton.addEventListener('click', () => { currentSide = 'SELL'; sideSellButton.classList.add('active'); sideBuyButton.classList.remove('active'); fetchOffers(); });
-    sideBuyButton.addEventListener('click', () => { currentSide = 'BUY'; sideBuyButton.classList.add('active'); sideSellButton.classList.remove('active'); fetchOffers(); });
-    currencySelect.addEventListener('change', fetchOffers);
-
-    document.addEventListener('DOMContentLoaded', async () => {
-        sideSellButton.classList.add('active');
-        await populatePaymentMethods();
-        await fetchOffers();
-    });
+    async function populatePaymentMethods(){try{const e=await fetch("/api/payment-methods");if(!e.ok)return;let t=await e.json();paymentOptionsList.innerHTML="";const n=document.createElement("li");n.textContent="Todos",n.dataset.value="",n.addEventListener("click",handlePaymentSelection),paymentOptionsList.appendChild(n);const o=["Revolut","Wise","SEPA (EU) Instant","Bizum","PIX"];t.sort((e,t)=>{const n=o.includes(e.name),r=o.includes(t.name);return n&&!r?-1:!n&&r?1:(e.name||"").localeCompare(t.name||"")}).forEach(e=>{if(!e.name)return;const t=document.createElement("li");t.textContent=e.name,t.dataset.value=e.name,t.addEventListener("click",handlePaymentSelection),paymentOptionsList.appendChild(t)})}catch(e){console.error("Erro ao popular métodos de pagamento:",e)}}async function fetchOffers(){loader.style.display="block",offersTbody.innerHTML="",noOffersMessage.style.display="none";const e=currencySelect.value;let t=`/api/offers?currency_code=${e}&side=${currentSide}`;selectedPaymentMethod&&(t+=`&payment_method=${selectedPaymentMethod}`);try{const e=await fetch(t);if(!e.ok)throw new Error(`HTTP error! status: ${e.status}`);let n=await e.json();0===n.length?noOffersMessage.style.display="block":n.forEach(t=>{const n=offersTbody.insertRow();n.innerHTML=`<td>${t.trader_username||"N/A"}</td><td>${(t.trader_rating||0).toFixed(2)} ★</td><td>${formatCurrency(t.price,e)}</td><td>${formatCurrency(t.market_price,e)}</td><td><span class="${getPremiumClass(t.premium)}">${formatPremium(t.premium)}</span></td><td>${t.min_amount||"N/A"} - ${t.max_amount||"N/A"}</td><td>${t.payment_method_name||"N/A"}</td><td>${t.country||"Global"}</td><td><a href="${t.affiliate_link}" target="_blank" class="button">Ver Oferta</a></td>`})}catch(e){console.error("Erro ao renderizar ofertas:",e),noOffersMessage.innerText="Erro ao exibir as ofertas.",noOffersMessage.style.display="block"}finally{loader.style.display="none"}}function getPremiumClass(e){return null==e? "premium-neutral" :e < 1? "premium-good" :e > 5? "premium-bad" :"premium-neutral"}function formatCurrency(e,t){if(null==e||!t)return"N/A";const n="string"==typeof e?parseFloat(e.replace(",","")):e;return`${n.toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2})} ${t}`}function formatPremium(e){return null==e?"N/A":`${e.toFixed(2)}%`}function handlePaymentSelection(e){selectedPaymentMethod=e.currentTarget.dataset.value,paymentSelectedText.textContent=e.currentTarget.textContent,paymentDropdown.classList.remove("open"),fetchOffers()}paymentButton.addEventListener("click",e=>{e.stopPropagation(),paymentDropdown.classList.toggle("open")}),document.addEventListener("click",()=>{paymentDropdown.classList.remove("open")}),paymentSearch.addEventListener("click",e=>{e.stopPropagation()}),paymentSearch.addEventListener("input",()=>{const e=paymentSearch.value.toLowerCase();paymentOptionsList.querySelectorAll("li").forEach(t=>{const n=t.textContent.toLowerCase();t.classList.toggle("hidden",!n.includes(e))})}),sideSellButton.addEventListener("click",()=>{currentSide="SELL",sideSellButton.classList.add("active"),sideBuyButton.classList.remove("active"),fetchOffers()}),sideBuyButton.addEventListener("click",()=>{currentSide="BUY",sideBuyButton.classList.add("active"),sideSellButton.classList.remove("active"),fetchOffers()}),currencySelect.addEventListener("change",fetchOffers),document.addEventListener("DOMContentLoaded",async()=>{await populatePaymentMethods(),await fetchOffers()});
 </script>
 
 </body>
