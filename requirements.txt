@@ -1,0 +1,6 @@
+fastapi
+uvicorn[standard]
+httpx
+pydantic
+pydantic-settings  # Para ler o ficheiro .env
+jinja2             # Para renderizar os templates HTML

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ne0_p2p - Ofertas P2P de Bitcoin</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+<header>
+    <h1>ne0_p2p</h1>
+    <p>As melhores ofertas P2P com desconto nas taxas!</p>
+</header>
+
+<main>
+    <div class="filters">
+        <form action="/" method="get">
+            <label for="country">País:</label>
+            <select id="country" name="country" onchange="this.form.submit()">
+                <option value="PT" {% if selected_country == 'PT' %}selected{% endif %}>Portugal</option>
+                <option value="BR" {% if selected_country == 'BR' %}selected{% endif %}>Brasil</option>
+                <option value="US" {% if selected_country == 'US' %}selected{% endif %}>Estados Unidos</option>
+            </select>
+        </form>
+    </div>
+
+    <div class="info-box">
+        <p><strong>Dica:</strong> Use os nossos links para obter um <strong>desconto permanente</strong> nas taxas da Hodl Hodl (de 0.5% para 0.45%)!</p>
+    </div>
+
+    <div class="offers-container">
+        {% if offers %}
+        <table>
+            <thead>
+            <tr>
+                <th>Trader</th>
+                <th>Reputação</th>
+                <th>Preço</th>
+                <th>Limites</th>
+                <th>Método de Pagamento</th>
+                <th>Ação</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for offer in offers %}
+            <tr>
+                <td>{{ offer.trader_username }}</td>
+                <td>{{ "%.2f"|format(offer.trader_rating) }} ★</td>
+                <td>{{ offer.price }} {{ offer.title.split(' ')[-1] }}</td>
+                <td>{{ offer.min_amount }} - {{ offer.max_amount }}</td>
+                <td>{{ offer.payment_method }}</td>
+                <td><a href="{{ offer.affiliate_link }}" target="_blank" class="button">Comprar</a></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="no-offers">Nenhuma oferta encontrada para a seleção atual.</p>
+        {% endif %}
+    </div>
+</main>
+
+<footer>
+    <p>&copy; 2025 ne0_p2p - Encontre as melhores ofertas e poupe.</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,13 @@
+# Ambiente Virtual
+venv/
+.venv/
+
+# Ficheiros de IDE
+.idea/
+
+# Ficheiros de cache do Python
+__pycache__/
+*.pyc
+
+# Ficheiros de ambiente - NUNCA ENVIAR PARA O GITHUB
+.env
