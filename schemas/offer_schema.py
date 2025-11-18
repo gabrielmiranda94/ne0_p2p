@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from typing import Optional
 
 class Offer(BaseModel):
     id: str
@@ -14,6 +15,11 @@ class Offer(BaseModel):
     trader_rating: float
     affiliate_link: str
 
+    # NOVOS CAMPOS PARA O COMPARADOR DE PREÇOS
+    # Usamos 'Optional' porque se a API da CoinGecko falhar,
+    # estes campos podem não existir.
+    market_price: Optional[float] = None
+    premium: Optional[float] = None
+
     class Config:
-        # Permite que o Pydantic mapeie dados mesmo que não sejam um dicionário
         from_attributes = True

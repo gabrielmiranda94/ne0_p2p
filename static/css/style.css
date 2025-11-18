@@ -1,16 +1,130 @@
-/* ... (todo o seu CSS existente) ... */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
-/* Estilos para o novo campo de input */
-.filters div {
-    margin: 0 1rem;
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f7f9;
+    color: #333;
+    margin: 0;
+    line-height: 1.6;
 }
 
+header {
+    background-color: #0d1b2a;
+    color: #fff;
+    padding: 1.5rem 2rem;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.5rem;
+}
+
+main {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+.filters {
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.filters div {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filters label {
+    font-weight: 500;
+}
+
+.filters select,
 .filters input[type="text"] {
     padding: 8px 12px;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 1rem;
+}
+
+.filters input[type="text"] {
     width: 200px;
+}
+
+.info-box {
+    background-color: #e0f7fa;
+    color: #00796b;
+    border: 1px solid #b2dfdb;
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.offers-container {
+    background-color: #fff;
+    border-radius: 8px;
+    overflow-x: auto;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    min-height: 150px; /* Para que o loader tenha espaço */
+    position: relative;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+th {
+    background-color: #fafafa;
+    font-weight: 700;
+}
+
+tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+.button {
+    background-color: #ff9900;
+    color: #fff !important; /* Forçar a cor do texto */
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    display: inline-block;
+}
+
+.button:hover {
+    background-color: #e68a00;
+}
+
+.no-offers {
+    padding: 2rem;
+    text-align: center;
+    color: #777;
+}
+
+footer {
+    text-align: center;
+    margin-top: 3rem;
+    padding: 1rem;
+    color: #777;
 }
 
 /* Estilos para o Loader */
@@ -21,10 +135,26 @@
     width: 40px;
     height: 40px;
     animation: spin 1s linear infinite;
-    margin: 2rem auto;
+    margin: 3rem auto;
+    display: none; /* Começa escondido */
 }
 
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+/* Estilos para a coluna de Prémio */
+.premium-good {
+    color: #2e7d32; /* Verde escuro */
+    font-weight: 700;
+}
+
+.premium-bad {
+    color: #c62828; /* Vermelho escuro */
+    font-weight: 700;
+}
+
+.premium-neutral {
+    color: #555;
 }
