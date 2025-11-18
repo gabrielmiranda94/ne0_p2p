@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chimera: Compra Direta de Bitcoin - ne0_p2p</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .buy-container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding-top: 2rem;
+        }
+        #kado-widget {
+            width: 100%;
+            height: 620px;
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(var(--shadow-color), 0.15);
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="container">
+        <nav>
+            <a href="/" class="logo">ne0_p2p</a>
+            <ul class="nav-menu">
+                <li><a href="/">Ofertas P2P</a></li>
+                <li><a href="/wallets">Carteiras</a></li>
+                <li><a href="/buy-chimera-no-kyc" class="active">Compra Direta</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+    <section class="hero">
+        <h1>Chimera: Compre Bitcoin em Minutos.</h1>
+        <p>A forma mais rápida de adicionar Bitcoin à sua carteira, com privacidade e sem burocracia para pequenas quantias.</p>
+    </section>
+
+    <div class="buy-container">
+        <iframe id="kado-widget" title="Kado Widget"></iframe>
+    </div>
+</main>
+
+<footer>
+    <div class="container">
+        <p>&copy; 2025 ne0_p2p - A sua jornada para a soberania começa agora.</p>
+    </div>
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const kadoWidget = document.getElementById('kado-widget');
+        const apiKey = 'SUA_API_KEY_DO_KADO_AQUI';
+        const referralCode = 'SEU_REFERRAL_CODE_AQUI';
+        const defaultFiat = 'EUR';
+        const defaultAsset = 'BTC';
+        const widgetUrl = `https://app.kado.money/?apiKey=${apiKey}&referralCode=${referralCode}&onPayAmount=100&onPayCurrency=${defaultFiat}&onToAsset=${defaultAsset}&network=BITCOIN&email&mode=minimal`;
+        kadoWidget.src = widgetUrl;
+    });
+</script>
+
+</body>
+</html>

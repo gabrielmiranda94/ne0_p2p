@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ofertas P2P - ne0_p2p</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<header>
+    <div class="container">
+        <nav>
+            <a href="/" class="logo">ne0_p2p</a>
+            <ul class="nav-menu">
+                <li><a href="/offers" class="active">Ofertas P2P</a></li>
+                <li><a href="/wallets">Carteiras</a></li>
+                <li><a href="/buy-chimera-no-kyc">Compra Direta</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+    <section class="hero">
+        <h1>O Seu Ponto de Encontro com o Bitcoin.</h1>
+        <p>Descubra, compare e negoceie Bitcoin de forma privada e segura. A soberania financeira começa aqui.</p>
+    </section>
+    <section class="filters">
+        <div class="side-selector">
+            <button id="side-sell" class="side-button active" data-side="SELL">Comprar BTC</button>
+            <button id="side-buy" class="side-button" data-side="BUY">Vender BTC</button>
+        </div>
+        <div>
+            <label for="currency">Moeda</label>
+            <select id="currency"><option value="EUR">Euro (EUR)</option><option value="BRL">Real (BRL)</option><option value="USD">Dólar (USD)</option></select>
+        </div>
+        <div>
+            <label>Método de Pagamento</label>
+            <div class="custom-dropdown" id="payment-dropdown">
+                <button class="dropdown-button"><span id="payment-selected-text">Todos</span></button>
+                <div class="dropdown-menu">
+                    <div class="dropdown-search"><input type="text" id="payment-search" placeholder="Filtrar..."></div>
+                    <ul class="dropdown-options" id="payment-options"></ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div id="content-area">
+        <div id="loader" style="display: none;"></div>
+        <div id="offers-container"></div>
+        <div id="no-offers-container" class="no-offers-container" style="display: none;"><p>Nenhuma oferta encontrada para a sua seleção.</p></div>
+    </div>
+</main>
+
+<footer>
+    <div class="container"><p>&copy; 2025 ne0_p2p - A sua jornada para a soberania começa agora.</p></div>
+</footer>
+
+<div id="redirect-modal" class="modal-overlay">
+    <div class="modal-content">
+        <h2>Está quase a chegar!</h2>
+        <ul class="modal-info-list">
+            <li>
+                <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-4.5 0V6.75A2.25 2.25 0 0111.25 4.5h2.25a2.25 2.25 0 012.25 2.25v.75m-4.5 0h4.5m-4.5 0a2.25 2.25 0 01-2.25-2.25V6.75a2.25 2.25 0 012.25-2.25h2.25a2.25 2.25 0 012.25 2.25v.75" /></svg></div>
+                <p>Será redirecionado para a <strong>Hodl Hodl</strong>, uma plataforma P2P de confiança.</p>
+            </li>
+            <li>
+                <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L9.568 3z" /><path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z" /></svg></div>
+                <p>Graças ao nosso link, terá um <strong>desconto permanente</strong> nas taxas de negociação (de 0.5% para 0.45%).</p>
+            </li>
+            <li>
+                <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg></div>
+                <p>O registo é rápido, <strong>sem verificação de identidade (KYC)</strong>. A sua privacidade é respeitada.</p>
+            </li>
+            <li>
+                <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12V7.5a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 7.5v9.75A2.25 2.25 0 005.25 21h4.25m8.375-10.5a.375.375 0 11-1.5 0 .375.375 0 011.5 0z" /></svg></div>
+                <p>O Bitcoin é enviado <strong>diretamente para a sua carteira</strong>. Você tem controlo total (auto-custódia).</p>
+            </li>
+        </ul>
+        <div class="modal-buttons">
+            <button id="modal-cancel-btn" class="modal-button secondary">Cancelar</button>
+            <button id="modal-continue-btn" class="modal-button primary">Continuar para a Oferta</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const offersContainer = document.getElementById('offers-container');
+    const loader = document.getElementById('loader');
+    const noOffersContainer = document.getElementById('no-offers-container');
+    const currencySelect = document.getElementById('currency');
+    const sideSellButton = document.getElementById('side-sell');
+    const sideBuyButton = document.getElementById('side-buy');
+    const paymentDropdown = document.getElementById('payment-dropdown');
+    const paymentButton = paymentDropdown.querySelector('.dropdown-button');
+    const paymentSelectedText = document.getElementById('payment-selected-text');
+    const paymentSearch = document.getElementById('payment-search');
+    const paymentOptionsList = document.getElementById('payment-options');
+    const modal = document.getElementById('redirect-modal');
+    const modalContinueBtn = document.getElementById('modal-continue-btn');
+    const modalCancelBtn = document.getElementById('modal-cancel-btn');
+
+    function openModal(url) { modal.classList.add('visible'); modalContinueBtn.dataset.url = url; }
+    function closeModal() { modal.classList.remove('visible'); }
+    modalContinueBtn.addEventListener('click', () => { const url = modalContinueBtn.dataset.url; if (url) { window.open(url, '_blank'); closeModal(); } });
+    modalCancelBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+    async function fetchOffers() {
+        loader.style.display = 'block'; offersContainer.innerHTML = ''; noOffersContainer.style.display = 'none';
+        const currency = currencySelect.value;
+        const side = document.querySelector('.side-button.active').dataset.side;
+        const paymentMethodText = paymentSelectedText.textContent;
+        const paymentMethod = paymentMethodText === 'Todos' ? '' : paymentMethodText;
+        let url = `/api/offers?currency_code=${currency}&side=${side}`;
+        if (paymentMethod) { url += `&payment_method=${paymentMethod}`; }
+        try {
+            const response = await fetch(url);
+            const offers = await response.json();
+            if (offers.length === 0) { noOffersContainer.style.display = 'block'; }
+            else {
+                offers.forEach((offer, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'offer-card'; card.style.animationDelay = `${index * 50}ms`;
+                    const premium = offer.premium !== null ? `${offer.premium.toFixed(2)}%` : 'N/A';
+                    const rating = offer.trader_rating !== null ? `${offer.trader_rating.toFixed(2)} ★` : 'Novo';
+                    card.innerHTML = `<div class="trader-info"><span class="trader-name">${offer.trader_username || 'Anónimo'}</span><span class="trader-rating">${rating}</span></div><div class="price-section">${formatCurrency(offer.price, offer.currency_code)}</div><div class="details"><p><strong>Prémio:</strong> ${premium}</p><p><strong>Limites:</strong> ${offer.min_amount || 'N/A'} - ${offer.max_amount || 'N/A'} ${offer.currency_code}</p><p><strong>Pagamento:</strong> ${offer.payment_method_name || 'N/A'}</p></div><button class="button offer-button" data-url="${offer.affiliate_link}">Ver Oferta</button>`;
+                    offersContainer.appendChild(card);
+                });
+                document.querySelectorAll('.offer-button').forEach(button => { button.addEventListener('click', (e) => { openModal(e.currentTarget.dataset.url); }); });
+            }
+        } catch (error) { console.error("Erro ao renderizar ofertas:", error); noOffersContainer.querySelector('p').textContent = 'Ocorreu um erro ao carregar as ofertas.'; noOffersContainer.style.display = 'block'; }
+        finally { loader.style.display = 'none'; }
+    }
+
+    async function populatePaymentMethods() {
+        try {
+            const response = await fetch('/api/payment-methods');
+            if (!response.ok) return;
+            const methods = await response.json();
+            paymentOptionsList.innerHTML = "";
+            const allOption = document.createElement('li');
+            allOption.textContent = "Todos"; allOption.dataset.value = "";
+            allOption.addEventListener('click', handlePaymentSelection);
+            paymentOptionsList.appendChild(allOption);
+            const priorityOrder = ['Revolut', 'SEPA (EU) Instant', 'Wise', 'PIX', 'Bizum'];
+            methods.sort((a, b) => {
+                const aName = a.name || ""; const bName = b.name || "";
+                const aIndex = priorityOrder.indexOf(aName); const bIndex = priorityOrder.indexOf(bName);
+                if (aIndex !== -1 && bIndex !== -1) { return aIndex - bIndex; }
+                if (aIndex !== -1) { return -1; }
+                if (bIndex !== -1) { return 1; }
+                return aName.localeCompare(bName);
+            }).forEach(method => {
+                if (method.name) {
+                    const option = document.createElement('li');
+                    option.textContent = method.name; option.dataset.value = method.name;
+                    option.addEventListener('click', handlePaymentSelection);
+                    paymentOptionsList.appendChild(option);
+                }
+            });
+        } catch (error) { console.error("Erro ao popular métodos de pagamento:", error); }
+    }
+
+    function formatCurrency(price, currency) { const priceString = price ? (typeof price === 'string' ? parseFloat(price) : price).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "N/A"; return `${priceString} <span style="font-size: 0.9rem; color: var(--text-secondary);">${currency}</span>`; }
+    function handlePaymentSelection(e) { paymentSelectedText.textContent = e.currentTarget.textContent; paymentDropdown.classList.remove('open'); fetchOffers(); }
+    paymentButton.addEventListener('click', e => { e.stopPropagation(); paymentDropdown.classList.toggle('open'); });
+    document.addEventListener('click', () => paymentDropdown.classList.remove('open'));
+    paymentSearch.addEventListener('click', e => e.stopPropagation());
+    paymentSearch.addEventListener('input', () => { const filter = paymentSearch.value.toLowerCase(); paymentOptionsList.querySelectorAll('li').forEach(option => { const text = option.textContent.toLowerCase(); option.classList.toggle('hidden', !text.includes(filter)); }); });
+    sideSellButton.addEventListener('click', () => { document.querySelector('.side-button.active').classList.remove('active'); sideSellButton.classList.add('active'); fetchOffers(); });
+    sideBuyButton.addEventListener('click', () => { document.querySelector('.side-button.active').classList.remove('active'); sideBuyButton.classList.add('active'); fetchOffers(); });
+    currencySelect.addEventListener('change', fetchOffers);
+    document.addEventListener('DOMContentLoaded', async () => { await populatePaymentMethods(); await fetchOffers(); });
+</script>
+
+</body>
+</html>

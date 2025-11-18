@@ -63,7 +63,7 @@ def _parse_offers_safely(offers_data: List[dict]) -> List[Offer]:
 
 @router.get("/", response_class=HTMLResponse, summary="Página principal com as ofertas")
 async def get_offers_page(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse("offers.html", {"request": request})
 
 @router.get("/api/offers", response_model=List[Offer], summary="Endpoint de dados das ofertas")
 async def api_get_offers(
