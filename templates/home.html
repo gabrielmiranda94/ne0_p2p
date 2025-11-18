@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>ne0_p2p - Soberania Financeira Através do Seu Esforço</title>
-    <!-- v=1.4 para garantir que não há cache -->
-    <link rel="stylesheet" href="/static/css/style.css?v=1.4">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@1,400;1,500&display=swap" rel="stylesheet">
+    <!-- Cache-buster para forçar reload do CSS -->
+    <link rel="stylesheet" href="/static/css/style.css?v=1.5">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@1,400;1,500&display=swap" rel="stylesheet" />
 </head>
 <body>
 
@@ -28,17 +28,25 @@
 
 <section class="video-hero-container">
     <div class="video-background">
-        <video autoplay muted loop playsinline>
-            <source src="https://www.pexels.com/video/farmer-pulling-weeds-in-field-10041435/" type="video/mp4">
+        <!--
+            Use um ficheiro local para evitar hotlinking / bloqueios.
+            Coloque o MP4 em: static/videos/farmer-pulling-weeds-10041435.mp4
+            Defina poster="/static/images/home-poster.jpg" se tiver uma imagem estática.
+        -->
+        <video autoplay muted loop playsinline poster="/static/images/home-poster.jpg">
+            <source src="/static/videos/10041435-hd_1080_1920_24fps.mp4" type="video/mp4">
             O seu navegador não suporta vídeos HTML5.
         </video>
     </div>
+
+    <!-- overlay para garantir legibilidade (ajustável via CSS patch) -->
     <div class="video-overlay"></div>
+
     <div class="manifesto-content">
         <h1>O que é seu, é seu.</h1>
         <p class="subtitulo">Proteja o património da sua família e o valor do seu trabalho.</p>
         <div class="genesis-quote">
-            <p>"Maldita é a terra por tua causa; com sofrimento obterás do solo o teu alimento, todos os dias da tua vida. [...] Do suor do teu rosto comerás o teu pão..."</p>
+            <p>"Maldita é a terra por tua causa; com sofrimento obterás do solo o teu alimento, todos os dias da tua vida. Do suor do teu rosto comerás o teu pão..."</p>
             <span>— Génesis 3:17-19</span>
         </div>
     </div>
