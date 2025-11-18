@@ -6,9 +6,23 @@ from typing import List
 from schemas.offer_schema import Offer
 from services import hodlhodl_service
 
-# ESTA É A LINHA CRÍTICA QUE ESTÁ A CAUSAR O ERRO
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
+
+def _parse_offers_safely(offers_data: List[dict]) -> List[Offer]:
+    """
+    Helper function to safely parse a list of offer dictionaries into Offer models.
+    It ignores any offer that fails validation.
+    """
+    valid_offers = []
+    for offer_dict in offers_data:
+        try:
+            valid_offers.append(Offer.parse_obj(offer_dict))
+        except Exception:
+            # Em um sistema de produção, logaríamos o erro aqui.
+            # print(f"Could not parse offer: {offer_dict}. Error: {e}")
+            continue
+    return valid_offers
 
 @router.get("/", response_class=HTMLResponse, summary="Página principal com as ofertas")
 async def get_offers_page(
@@ -20,7 +34,9 @@ async def get_offers_page(
     """
     raw_offers = await hodlhodl_service.get_hodlhodl_offers(country_code=country, payment_method=None)
     processed_offers = hodlhodl_service.process_and_enrich_offers(raw_offers)
-    offers = [Offer.parse_obj(o) for o in processed_offers]
+
+    # Usando a nova função segura para parsear
+    offers = _parse_offers_safely(processed_offers)
 
     return templates.TemplateResponse("index.html", {
         "request": request,
@@ -39,13 +55,9 @@ async def api_get_offers(
     try:
         raw_offers = await hodlhodl_service.get_hodlhodl_offers(country_code, payment_method)
         processed_offers = hodlhodl_service.process_and_enrich_offers(raw_offers)
-        # Filtra os dicionários que não puderam ser parseados para o schema Offer
-        valid_offers = []
-        for o in processed_offers:
-            try:
-                valid_offers.append(Offer.parse_obj(o))
-            except Exception:
-                continue # Ignora ofertas com dados inesperados
-        return valid_offers
+
+        # Usando a nova função segura para parsear
+        offers = _parse_offers_safely(processed_offers)
+        return offers
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
