@@ -14,6 +14,12 @@
 
 <main>
     <div class="filters">
+        <div class="side-selector">
+            <!-- Se o utilizador quer comprar BTC, ele procura ofertas de 'SELL' -->
+            <button id="side-sell" class="side-button {% if selected_side == 'SELL' %}active{% endif %}" data-side="SELL">Quero Comprar</button>
+            <!-- Se o utilizador quer vender BTC, ele procura ofertas de 'BUY' -->
+            <button id="side-buy" class="side-button {% if selected_side == 'BUY' %}active{% endif %}" data-side="BUY">Quero Vender</button>
+        </div>
         <div>
             <label for="country">País:</label>
             <select id="country">
@@ -33,7 +39,7 @@
     </div>
 
     <div id="offers-container" class="offers-container">
-        <div id="loader" class="loader" style="display: none;"></div>
+        <div id="loader" class="loader"></div>
         <table>
             <thead>
             <tr>
@@ -48,39 +54,10 @@
             </tr>
             </thead>
             <tbody id="offers-tbody">
-            <!-- O conteúdo inicial é preenchido pelo servidor -->
-            {% for offer in offers %}
-            <tr>
-                <td>{{ offer.trader_username }}</td>
-                <td>{{ "%.2f"|format(offer.trader_rating) }} ★</td>
-                <td>{{ offer.price }} {{ offer.title.split(' ')[-1] }}</td>
-                <td>
-                    {% if offer.market_price %}
-                    {{ "%.2f"|format(offer.market_price) }} {{ offer.title.split(' ')[-1] }}
-                    {% else %}
-                    N/A
-                    {% endif %}
-                </td>
-                <td>
-                    {% if offer.premium is not none %}
-                    <span class="
-                                    {% if offer.premium < 1 %}premium-good
-                                    {% elif offer.premium > 5 %}premium-bad
-                                    {% else %}premium-neutral
-                                    {% endif %}
-                                ">{{ "%.2f"|format(offer.premium) }}%</span>
-                    {% else %}
-                    N/A
-                    {% endif %}
-                </td>
-                <td>{{ offer.min_amount }} - {{ offer.max_amount }}</td>
-                <td>{{ offer.payment_method }}</td>
-                <td><a href="{{ offer.affiliate_link }}" target="_blank" class="button">Comprar</a></td>
-            </tr>
-            {% endfor %}
+            <!-- O conteúdo é carregado dinamicamente pelo JavaScript -->
             </tbody>
         </table>
-        <p id="no-offers-message" class="no-offers" style="display: {% if not offers %}block{% else %}none{% endif %};">Nenhuma oferta encontrada para a seleção atual.</p>
+        <p id="no-offers-message" class="no-offers">Nenhuma oferta encontrada para a seleção atual.</p>
     </div>
 </main>
 
@@ -89,13 +66,18 @@
 </footer>
 
 <script>
+    // --- SELETORES DE ELEMENTOS ---
     const countrySelect = document.getElementById('country');
     const paymentMethodInput = document.getElementById('payment_method');
     const offersTbody = document.getElementById('offers-tbody');
     const noOffersMessage = document.getElementById('no-offers-message');
     const loader = document.getElementById('loader');
+    const sideSellButton = document.getElementById('side-sell');
+    const sideBuyButton = document.getElementById('side-buy');
 
     let debounceTimer;
+    // Pega o valor inicial do servidor para saber qual botão está ativo
+    let currentSide = '{{ selected_side }}';
 
     // --- FUNÇÕES HELPER PARA FORMATAR DADOS ---
     function getPremiumClass(premium) {
@@ -107,7 +89,9 @@
 
     function formatCurrency(value, currency) {
         if (value === null || value === undefined) return 'N/A';
-        return `${parseFloat(value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currency}`;
+        // Garante que o valor é um número antes de formatar
+        const numericValue = typeof value === 'string' ? parseFloat(value.replace(',', '')) : value;
+        return `${numericValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currency}`;
     }
 
     function formatPremium(premium) {
@@ -115,6 +99,7 @@
         return `${premium.toFixed(2)}%`;
     }
 
+    // --- LÓGICA PRINCIPAL DE BUSCA ---
     async function fetchOffers() {
         const country = countrySelect.value;
         const paymentMethod = paymentMethodInput.value.trim();
@@ -123,7 +108,7 @@
         offersTbody.innerHTML = '';
         noOffersMessage.style.display = 'none';
 
-        let url = `/api/offers?country_code=${country}`;
+        let url = `/api/offers?country_code=${country}&side=${currentSide}`;
         if (paymentMethod) {
             url += `&payment_method=${paymentMethod}`;
         }
@@ -141,16 +126,17 @@
                     row.innerHTML = `
                             <td>${offer.trader_username}</td>
                             <td>${offer.trader_rating.toFixed(2)} ★</td>
-                            <td>${formatCurrency(offer.price.replace(',', ''), currency)}</td>
+                            <td>${formatCurrency(offer.price, currency)}</td>
                             <td>${formatCurrency(offer.market_price, currency)}</td>
                             <td><span class="${getPremiumClass(offer.premium)}">${formatPremium(offer.premium)}</span></td>
                             <td>${offer.min_amount} - ${offer.max_amount}</td>
                             <td>${offer.payment_method}</td>
-                            <td><a href="${offer.affiliate_link}" target="_blank" class="button">Comprar</a></td>
+                            <td><a href="${offer.affiliate_link}" target="_blank" class="button">Ver Oferta</a></td>
                         `;
                 });
             }
         } catch (error) {
+            console.error("Erro ao buscar ofertas:", error);
             noOffersMessage.innerText = 'Erro ao carregar as ofertas. Tente novamente.';
             noOffersMessage.style.display = 'block';
         } finally {
@@ -158,13 +144,28 @@
         }
     }
 
+    // --- EVENT LISTENERS ---
+    function handleSideClick(event) {
+        currentSide = event.target.dataset.side;
+
+        sideSellButton.classList.remove('active');
+        sideBuyButton.classList.remove('active');
+        event.target.classList.add('active');
+
+        fetchOffers(); // Busca as novas ofertas
+    }
+
+    sideSellButton.addEventListener('click', handleSideClick);
+    sideBuyButton.addEventListener('click', handleSideClick);
+
     countrySelect.addEventListener('change', fetchOffers);
+
     paymentMethodInput.addEventListener('input', () => {
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(fetchOffers, 500);
     });
 
-    // Carregar as ofertas para o país selecionado quando a página abre pela primeira vez
+    // Carrega os dados iniciais quando a página é totalmente carregada
     document.addEventListener('DOMContentLoaded', fetchOffers);
 </script>
 </body>
