@@ -1,17 +1,16 @@
+import asyncio  # 1. Importar a biblioteca asyncio
 import datetime
 from fastapi import APIRouter, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from typing import List
 
-# Importar os nossos serviços
 from services import hodlhodl_service, market_data_service
 from schemas.offer_schema import Offer
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
-# Mapeia países a moedas para sabermos que preço de mercado pedir
 COUNTRY_CURRENCY_MAP = {
     "PT": "EUR",
     "BR": "BRL",
@@ -19,9 +18,7 @@ COUNTRY_CURRENCY_MAP = {
 }
 
 def _calculate_premium(offer_price_str: str, market_price: float) -> float | None:
-    """Tenta calcular o prémio percentual de uma oferta."""
     try:
-        # Limpa o preço da oferta para garantir que é um número (ex: "10,500.00" -> 10500.00)
         offer_price = float(offer_price_str.replace(",", ""))
         if market_price > 0:
             premium = ((offer_price / market_price) - 1) * 100
@@ -34,16 +31,17 @@ async def _get_and_process_offers(country_code: str, payment_method: str | None)
     """
     Função centralizada para buscar ofertas e enriquecê-las com dados de mercado.
     """
-    # 1. Obter a moeda correspondente ao país
     currency = COUNTRY_CURRENCY_MAP.get(country_code.upper(), "USD")
 
-    # 2. Em paralelo, buscar as ofertas da Hodl Hodl e o preço de mercado da CoinGecko
-    raw_offers, market_price = await hodlhodl_service.get_hodlhodl_offers(country_code, payment_method), market_data_service.get_btc_market_price(currency)
+    # 2. AQUI ESTÁ A CORREÇÃO: Usar asyncio.gather para executar ambas em paralelo
+    results = await asyncio.gather(
+        hodlhodl_service.get_hodlhodl_offers(country_code, payment_method),
+        market_data_service.get_btc_market_price(currency)
+    )
+    raw_offers, market_price = results[0], results[1]
 
-    # 3. Processar e enriquecer os dados base da Hodl Hodl
     processed_offers = hodlhodl_service.process_and_enrich_offers(raw_offers)
 
-    # 4. Enriquecer cada oferta com os dados de mercado
     if market_price:
         for offer in processed_offers:
             offer["market_price"] = market_price
@@ -56,6 +54,7 @@ def _parse_offers_safely(offers_data: List[dict]) -> List[Offer]:
     valid_offers = []
     for offer_dict in offers_data:
         try:
+            # Atenção: Usando model_validate em vez de parse_obj para compatibilidade Pydantic v2
             valid_offers.append(Offer.model_validate(offer_dict))
         except Exception:
             continue
