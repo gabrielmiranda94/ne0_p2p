@@ -5,66 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ne0_p2p - Soberania Financeira Através do Seu Esforço</title>
     <link rel="stylesheet" href="/static/css/style.css">
-    <style>
-        /* Estilos específicos para a nova homepage */
-        .manifesto-hero {
-            padding: 8rem 1rem;
-            max-width: 800px;
-            margin: 0 auto;
-            text-align: center;
-        }
-        .manifesto-hero h1 {
-            font-size: 3.8rem;
-            letter-spacing: -1.5px;
-            margin-bottom: 1.5rem;
-        }
-        .manifesto-hero .subtitulo {
-            font-size: 1.5rem;
-            color: var(--text-secondary);
-            margin-bottom: 3rem;
-        }
-        .genesis-quote {
-            font-family: "Times New Roman", Times, serif; /* Uma fonte clássica para a citação */
-            font-style: italic;
-            font-size: 1.25rem;
-            color: var(--text-secondary);
-            margin: 0 auto 3rem;
-            max-width: 650px;
-            line-height: 1.7;
-            border-left: 3px solid var(--border-color);
-            padding-left: 2rem;
-            text-align: left;
-        }
-        .cta-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin-top: 4rem;
-        }
-        .cta-card {
-            background-color: var(--bg-surface);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 2rem;
-            text-align: center;
-            transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
-        }
-        .cta-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(var(--shadow-color), 0.1);
-        }
-        .cta-card h3 { font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--accent); }
-        .cta-card p { color: var(--text-secondary); margin-bottom: 1.5rem; }
-        .cta-card .button { width: 100%; }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@1,400;1,500&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<header>
+<header class="home-header">
     <div class="container">
         <nav>
             <a href="/" class="logo">ne0_p2p</a>
             <ul class="nav-menu">
+                <li><a href="/" class="active">Home</a></li>
                 <li><a href="/offers">Ofertas P2P</a></li>
                 <li><a href="/wallets">Carteiras</a></li>
                 <li><a href="/buy-chimera-no-kyc">Compra Direta</a></li>
@@ -73,43 +25,58 @@
     </div>
 </header>
 
-<main class="container">
-    <section class="manifesto-hero">
+<section class="video-hero-container">
+    <div class="video-background">
+        <!-- poster.jpg REMOVIDO DAQUI PARA CORRIGIR O ERRO 404 -->
+        <video autoplay muted loop playsinline>
+            <source src="https://videos.pexels.com/video-files/3209828/3209828-sd_640_360_30fps.mp4" type="video/mp4">
+            O seu navegador não suporta vídeos HTML5.
+        </video>
+    </div>
+    <div class="video-overlay"></div>
+    <div class="manifesto-content">
         <h1>O que é seu, é seu.</h1>
-        <p class="subtitulo">Proteja o património da sua família e o valor da sua força de trabalho.</p>
-
+        <p class="subtitulo">Proteja o património da sua família e o valor do seu trabalho.</p>
         <div class="genesis-quote">
-            <p>"Ao homem, ele declarou: [...] Maldita é a terra por tua causa! Com sofrimento obterás do solo o teu alimento, durante os dias de tua vida. [...] Do suor do teu rosto comerás o teu pão..."</p>
+            <p>"Maldita é a terra por tua causa; com sofrimento obterás do solo o teu alimento, todos os dias da tua vida. [...] Do suor do teu rosto comerás o teu pão..."</p>
             <span>— Génesis 3:17-19</span>
         </div>
-
-        <p>O seu esforço é sagrado. O seu trabalho tem valor. Numa era de incerteza, o Bitcoin é a ferramenta que lhe permite preservar esse valor. É a liberdade de poupar. É a segurança de construir um futuro. É a garantia de que o fruto do seu suor pertence a si e à sua família.</p>
-    </section>
-
-    <section class="cta-grid">
-        <div class="cta-card">
-            <h3>Ofertas P2P</h3>
-            <p>Negoceie diretamente com outras pessoas, de forma privada e segura. Máximo controlo.</p>
-            <a href="/offers" class="button">Explorar Ofertas</a>
-        </div>
-        <div class="cta-card">
-            <h3>Compra Direta</h3>
-            <p>A forma mais rápida de adquirir Bitcoin para a sua carteira, com conveniência e simplicidade.</p>
-            <a href="/buy-chimera-no-kyc" class="button">Comprar Agora</a>
-        </div>
-        <div class="cta-card">
-            <h3>Carteiras</h3>
-            <p>Aprenda a guardar o seu património de forma soberana. As suas chaves, o seu Bitcoin.</p>
-            <a href="/wallets" class="button">Proteger o Meu Valor</a>
-        </div>
-    </section>
-</main>
-
-<footer>
-    <div class="container">
-        <p>&copy; 2025 ne0_p2p - A sua jornada para a soberania começa agora.</p>
     </div>
-</footer>
+</section>
+
+<!-- SECÇÃO DE CONTEÚDO COM FUNDO BRANCO (AGORA INCLUI O RODAPÉ) -->
+<div class="main-content-section">
+    <main class="container">
+        <p class="section-intro">
+            O seu esforço é sagrado. Numa era de incerteza, o Bitcoin é a ferramenta que lhe permite preservar o fruto do seu trabalho. É a liberdade de poupar. É a segurança de construir um futuro.
+        </p>
+
+        <section class="cta-grid">
+            <div class="cta-card">
+                <h3>Ofertas P2P</h3>
+                <p>Negoceie diretamente com outras pessoas, de forma privada e segura. Máximo controlo.</p>
+                <a href="/offers" class="button">Explorar Ofertas</a>
+            </div>
+            <div class="cta-card">
+                <h3>Compra Direta</h3>
+                <p>A forma mais rápida de adquirir Bitcoin para a sua carteira, com conveniência e simplicidade.</p>
+                <a href="/buy-chimera-no-kyc" class="button">Comprar Agora</a>
+            </div>
+            <div class="cta-card">
+                <h3>Carteiras</h3>
+                <p>Aprenda a guardar o seu património de forma soberana. As suas chaves, o seu Bitcoin.</p>
+                <a href="/wallets" class="button">Proteger o Meu Valor</a>
+            </div>
+        </section>
+    </main>
+
+    <!-- RODAPÉ MOVIDO PARA DENTRO DA SECÇÃO DE CONTEÚDO BRANCO -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 ne0_p2p - A sua jornada para a soberania começa agora.</p>
+        </div>
+    </footer>
+</div>
 
 </body>
 </html>
