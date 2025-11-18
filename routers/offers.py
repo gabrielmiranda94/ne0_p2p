@@ -1,5 +1,4 @@
 import asyncio
-import datetime
 from fastapi import APIRouter, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -11,12 +10,6 @@ from schemas.offer_schema import Offer
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
-COUNTRY_CURRENCY_MAP = {
-    "PT": "EUR",
-    "BR": "BRL",
-    "US": "USD",
-}
-
 def _calculate_premium(offer_price_str: str, market_price: float) -> float | None:
     try:
         offer_price = float(str(offer_price_str).replace(",", ""))
@@ -27,12 +20,19 @@ def _calculate_premium(offer_price_str: str, market_price: float) -> float | Non
         return None
     return None
 
-async def _get_and_process_offers(country_code: str, payment_method: str | None, side: str) -> List[dict]:
-    currency = COUNTRY_CURRENCY_MAP.get(country_code.upper(), "USD")
+async def _get_and_process_offers(
+        currency_code: str,
+        payment_method: str | None,
+        side: str,
+        sort_by: str,
+        sort_direction: str
+) -> List[dict]:
 
     results = await asyncio.gather(
-        hodlhodl_service.get_hodlhodl_offers(country_code, payment_method, side),
-        market_data_service.get_btc_market_price(currency)
+        hodlhodl_service.get_hodlhodl_offers(
+            currency_code, payment_method, side, sort_by, sort_direction
+        ),
+        market_data_service.get_btc_market_price(currency_code)
     )
     raw_offers, market_price = results[0], results[1]
 
@@ -55,30 +55,22 @@ def _parse_offers_safely(offers_data: List[dict]) -> List[Offer]:
     return valid_offers
 
 @router.get("/", response_class=HTMLResponse, summary="Página principal com as ofertas")
-async def get_offers_page(
-        request: Request,
-        country: str = Query("PT", description="Código do país"),
-        side: str = Query("SELL", description="Tipo de oferta: BUY ou SELL")
-):
-    processed_offers = await _get_and_process_offers(country, None, side)
-    offers = _parse_offers_safely(processed_offers)
-
-    return templates.TemplateResponse("index.html", {
-        "request": request,
-        "offers": offers,
-        "selected_country": country,
-        "selected_side": side,
-        "current_year": datetime.datetime.now().year,
-    })
+async def get_offers_page(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
 @router.get("/api/offers", response_model=List[Offer], summary="Endpoint de dados das ofertas")
 async def api_get_offers(
-        country_code: str = Query("PT", description="Código do país"),
+        currency_code: str = Query("EUR", description="Código da moeda (EUR, BRL, USD)"),
         payment_method: str = Query(None, description="Filtra por método de pagamento"),
-        side: str = Query("SELL", description="Tipo de oferta: BUY ou SELL")
+        side: str = Query("SELL", description="Tipo de oferta: BUY ou SELL"),
+        sort_by: str = Query("price", description="Campo para ordenação"),
+        sort_direction: str = Query("asc", description="Direção da ordenação")
 ):
+    """Retorna uma lista de ofertas em formato JSON, filtradas primariamente por moeda."""
     try:
-        processed_offers = await _get_and_process_offers(country_code, payment_method, side)
+        processed_offers = await _get_and_process_offers(
+            currency_code, payment_method, side, sort_by, sort_direction
+        )
         offers = _parse_offers_safely(processed_offers)
         return offers
     except Exception as e:

@@ -15,22 +15,20 @@
 <main>
     <div class="filters">
         <div class="side-selector">
-            <!-- Se o utilizador quer comprar BTC, ele procura ofertas de 'SELL' -->
-            <button id="side-sell" class="side-button {% if selected_side == 'SELL' %}active{% endif %}" data-side="SELL">Quero Comprar</button>
-            <!-- Se o utilizador quer vender BTC, ele procura ofertas de 'BUY' -->
-            <button id="side-buy" class="side-button {% if selected_side == 'BUY' %}active{% endif %}" data-side="BUY">Quero Vender</button>
+            <button id="side-sell" class="side-button" data-side="SELL">Quero Comprar</button>
+            <button id="side-buy" class="side-button" data-side="BUY">Quero Vender</button>
         </div>
         <div>
-            <label for="country">País:</label>
-            <select id="country">
-                <option value="PT" {% if selected_country == 'PT' %}selected{% endif %}>Portugal</option>
-                <option value="BR" {% if selected_country == 'BR' %}selected{% endif %}>Brasil</option>
-                <option value="US" {% if selected_country == 'US' %}selected{% endif %}>Estados Unidos</option>
+            <label for="currency">Moeda:</label>
+            <select id="currency">
+                <option value="EUR">Euro (EUR)</option>
+                <option value="BRL">Real (BRL)</option>
+                <option value="USD">Dólar (USD)</option>
             </select>
         </div>
         <div>
             <label for="payment_method">Método de Pagamento:</label>
-            <input type="text" id="payment_method" placeholder="Ex: mbway, revolut, pix...">
+            <input type="text" id="payment_method" placeholder="Ex: Revolut, PIX...">
         </div>
     </div>
 
@@ -50,24 +48,22 @@
                 <th>Prémio</th>
                 <th>Limites</th>
                 <th>Método de Pagamento</th>
+                <th>País</th>
                 <th>Ação</th>
             </tr>
             </thead>
-            <tbody id="offers-tbody">
-            <!-- O conteúdo é carregado dinamicamente pelo JavaScript -->
-            </tbody>
+            <tbody id="offers-tbody"></tbody>
         </table>
-        <p id="no-offers-message" class="no-offers">Nenhuma oferta encontrada para a seleção atual.</p>
+        <p id="no-offers-message" class="no-offers" style="display: none;">Nenhuma oferta encontrada para a seleção atual.</p>
     </div>
 </main>
 
 <footer>
-    <p>&copy; {{ current_year }} ne0_p2p - Encontre as melhores ofertas e poupe.</p>
+    <p>&copy; 2025 ne0_p2p - Encontre as melhores ofertas e poupe.</p>
 </footer>
 
 <script>
-    // --- SELETORES DE ELEMENTOS ---
-    const countrySelect = document.getElementById('country');
+    const currencySelect = document.getElementById('currency');
     const paymentMethodInput = document.getElementById('payment_method');
     const offersTbody = document.getElementById('offers-tbody');
     const noOffersMessage = document.getElementById('no-offers-message');
@@ -76,22 +72,19 @@
     const sideBuyButton = document.getElementById('side-buy');
 
     let debounceTimer;
-    // Pega o valor inicial do servidor para saber qual botão está ativo
-    let currentSide = '{{ selected_side }}';
+    let currentSide;
 
-    // --- FUNÇÕES HELPER PARA FORMATAR DADOS ---
     function getPremiumClass(premium) {
         if (premium === null || premium === undefined) return 'premium-neutral';
-        if (premium < 1) return 'premium-good'; // Prémio abaixo de 1% é bom
-        if (premium > 5) return 'premium-bad';  // Prémio acima de 5% é mau
+        if (premium < 1) return 'premium-good';
+        if (premium > 5) return 'premium-bad';
         return 'premium-neutral';
     }
 
     function formatCurrency(value, currency) {
-        if (value === null || value === undefined) return 'N/A';
-        // Garante que o valor é um número antes de formatar
+        if (value === null || value === undefined || !currency) return 'N/A';
         const numericValue = typeof value === 'string' ? parseFloat(value.replace(',', '')) : value;
-        return `${numericValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currency}`;
+        return `${numericValue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currency}`;
     }
 
     function formatPremium(premium) {
@@ -99,74 +92,75 @@
         return `${premium.toFixed(2)}%`;
     }
 
-    // --- LÓGICA PRINCIPAL DE BUSCA ---
     async function fetchOffers() {
-        const country = countrySelect.value;
+        const currency = currencySelect.value;
         const paymentMethod = paymentMethodInput.value.trim();
 
         loader.style.display = 'block';
         offersTbody.innerHTML = '';
         noOffersMessage.style.display = 'none';
 
-        let url = `/api/offers?country_code=${country}&side=${currentSide}`;
+        let url = `/api/offers?currency_code=${currency}&side=${currentSide}`;
         if (paymentMethod) {
             url += `&payment_method=${paymentMethod}`;
         }
 
         try {
             const response = await fetch(url);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
             const offers = await response.json();
 
             if (offers.length === 0) {
                 noOffersMessage.style.display = 'block';
             } else {
                 offers.forEach(offer => {
-                    const currency = offer.title.split(' ').pop();
                     const row = offersTbody.insertRow();
+                    // ESTAS LINHAS ESTÃO CORRIGIDAS PARA CORRESPONDER AO JSON
                     row.innerHTML = `
-                            <td>${offer.trader_username}</td>
-                            <td>${offer.trader_rating.toFixed(2)} ★</td>
-                            <td>${formatCurrency(offer.price, currency)}</td>
-                            <td>${formatCurrency(offer.market_price, currency)}</td>
-                            <td><span class="${getPremiumClass(offer.premium)}">${formatPremium(offer.premium)}</span></td>
-                            <td>${offer.min_amount} - ${offer.max_amount}</td>
-                            <td>${offer.payment_method}</td>
-                            <td><a href="${offer.affiliate_link}" target="_blank" class="button">Ver Oferta</a></td>
-                        `;
+                        <td>${offer.trader_username || 'N/A'}</td>
+                        <td>${(offer.trader_rating || 0).toFixed(2)} ★</td>
+                        <td>${formatCurrency(offer.price, currency)}</td>
+                        <td>${formatCurrency(offer.market_price, currency)}</td>
+                        <td><span class="${getPremiumClass(offer.premium)}">${formatPremium(offer.premium)}</span></td>
+                        <td>${offer.min_amount || 'N/A'} - ${offer.max_amount || 'N/A'}</td>
+                        <td>${offer.payment_method_name || 'N/A'}</td>
+                        <td>${offer.country || 'Global'}</td>
+                        <td><a href="${offer.affiliate_link}" target="_blank" class="button">Ver Oferta</a></td>
+                    `;
                 });
             }
         } catch (error) {
-            console.error("Erro ao buscar ofertas:", error);
-            noOffersMessage.innerText = 'Erro ao carregar as ofertas. Tente novamente.';
+            console.error("Erro ao renderizar ofertas:", error);
+            noOffersMessage.innerText = 'Erro ao exibir as ofertas.';
             noOffersMessage.style.display = 'block';
         } finally {
             loader.style.display = 'none';
         }
     }
 
-    // --- EVENT LISTENERS ---
     function handleSideClick(event) {
         currentSide = event.target.dataset.side;
-
-        sideSellButton.classList.remove('active');
-        sideBuyButton.classList.remove('active');
-        event.target.classList.add('active');
-
-        fetchOffers(); // Busca as novas ofertas
+        sideSellButton.classList.toggle('active', currentSide === 'SELL');
+        sideBuyButton.classList.toggle('active', currentSide === 'BUY');
+        fetchOffers();
     }
 
     sideSellButton.addEventListener('click', handleSideClick);
     sideBuyButton.addEventListener('click', handleSideClick);
-
-    countrySelect.addEventListener('change', fetchOffers);
-
+    currencySelect.addEventListener('change', fetchOffers);
     paymentMethodInput.addEventListener('input', () => {
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(fetchOffers, 500);
     });
 
-    // Carrega os dados iniciais quando a página é totalmente carregada
-    document.addEventListener('DOMContentLoaded', fetchOffers);
+    document.addEventListener('DOMContentLoaded', () => {
+        currencySelect.value = 'EUR';
+        currentSide = 'SELL';
+        sideSellButton.classList.add('active');
+        sideBuyButton.classList.remove('active');
+        fetchOffers();
+    });
 </script>
 </body>
 </html>
