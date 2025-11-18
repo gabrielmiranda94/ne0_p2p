@@ -14,12 +14,9 @@ async def get_all_payment_methods() -> List[Dict]:
         try:
             response = await client.get("/api/frontend/payment_methods")
             response.raise_for_status()
-
-            # --- ESTA É A CORREÇÃO ---
             data = response.json()
-            # Extrai a lista de dentro da chave 'payment_methods'
+            # A correção que fizemos: extrair a lista de dentro da chave 'payment_methods'
             methods = data.get("payment_methods", [])
-
             print(f"HODL HODL /frontend/ API: Sucesso! Recebidos {len(methods)} métodos de pagamento.")
             return methods
         except (httpx.HTTPStatusError, httpx.RequestError) as e:
@@ -29,9 +26,7 @@ async def get_all_payment_methods() -> List[Dict]:
 async def get_hodlhodl_offers(
         currency_code: str,
         payment_method: str | None,
-        side: str,
-        sort_by: str,
-        sort_direction: str
+        side: str
 ) -> List[dict]:
     """Busca ofertas da API /frontend/ da Hodl Hodl, permitindo busca global por moeda."""
 

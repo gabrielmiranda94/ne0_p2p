@@ -10,12 +10,10 @@ from schemas.offer_schema import Offer
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
-# --- ENDPOINT SIMPLIFICADO ---
 @router.get("/api/payment-methods", response_model=List[Dict], summary="Lista todos os métodos de pagamento")
 async def get_payment_methods():
     """Retorna uma lista de todos os métodos de pagamento disponíveis na plataforma."""
     try:
-        # Não precisa de passar parâmetros
         methods = await hodlhodl_service.get_all_payment_methods()
         return methods
     except Exception as e:
@@ -34,14 +32,12 @@ def _calculate_premium(offer_price_str: str, market_price: float) -> float | Non
 async def _get_and_process_offers(
         currency_code: str,
         payment_method: str | None,
-        side: str,
-        sort_by: str,
-        sort_direction: str
+        side: str
 ) -> List[dict]:
 
     results = await asyncio.gather(
         hodlhodl_service.get_hodlhodl_offers(
-            currency_code, payment_method, side, sort_by, sort_direction
+            currency_code, payment_method, side
         ),
         market_data_service.get_btc_market_price(currency_code)
     )
@@ -73,14 +69,12 @@ async def get_offers_page(request: Request):
 async def api_get_offers(
         currency_code: str = Query("EUR", description="Código da moeda (EUR, BRL, USD)"),
         payment_method: str = Query(None, description="Filtra por método de pagamento"),
-        side: str = Query("SELL", description="Tipo de oferta: BUY ou SELL"),
-        sort_by: str = Query("price", description="Campo para ordenação (não usado pela API /frontend/)"),
-        sort_direction: str = Query("asc", description="Direção da ordenação (não usado pela API /frontend/)")
+        side: str = Query("SELL", description="Tipo de oferta: BUY ou SELL")
 ):
     """Retorna uma lista de ofertas em formato JSON, filtradas primariamente por moeda."""
     try:
         processed_offers = await _get_and_process_offers(
-            currency_code, payment_method, side, sort_by, sort_direction
+            currency_code, payment_method, side
         )
         offers = _parse_offers_safely(processed_offers)
         return offers

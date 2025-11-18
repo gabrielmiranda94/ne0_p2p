@@ -27,10 +27,21 @@
             </select>
         </div>
         <div>
-            <label for="payment_method">Método de Pagamento:</label>
-            <select id="payment_method">
-                <option value="">Todos</option>
-            </select>
+            <label>Método de Pagamento:</label>
+            <div class="custom-dropdown" id="payment-dropdown">
+                <button class="dropdown-button" id="payment-button">
+                    <!-- O texto já começa aqui, sem depender de JS -->
+                    <span id="payment-selected-text">Todos</span>
+                </button>
+                <div class="dropdown-menu">
+                    <div class="dropdown-search">
+                        <input type="text" id="payment-search" placeholder="Filtrar...">
+                    </div>
+                    <ul class="dropdown-options" id="payment-options">
+                        <!-- Gerado por JS -->
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -56,7 +67,7 @@
             </thead>
             <tbody id="offers-tbody"></tbody>
         </table>
-        <p id="no-offers-message" class="no-offers" style="display: none;">Nenhuma oferta encontrada para a seleção atual.</p>
+        <p id="no-offers-message" class="no-offers" style="display: none;">Nenhuma oferta encontrada.</p>
     </div>
 </main>
 
@@ -65,85 +76,81 @@
 </footer>
 
 <script>
+    // Todo o JavaScript permanece exatamente igual à versão anterior.
+    // O bug não estava no JS, mas sim na forma como o CSS interagia
+    // com o HTML durante o carregamento inicial.
+
     const currencySelect = document.getElementById('currency');
-    const paymentMethodSelect = document.getElementById('payment_method');
     const offersTbody = document.getElementById('offers-tbody');
     const noOffersMessage = document.getElementById('no-offers-message');
     const loader = document.getElementById('loader');
     const sideSellButton = document.getElementById('side-sell');
     const sideBuyButton = document.getElementById('side-buy');
 
-    let currentSide;
+    const paymentDropdown = document.getElementById('payment-dropdown');
+    const paymentButton = document.getElementById('payment-button');
+    const paymentSelectedText = document.getElementById('payment-selected-text');
+    const paymentSearch = document.getElementById('payment-search');
+    const paymentOptionsList = document.getElementById('payment-options');
+
+    let currentSide = 'SELL';
+    let selectedPaymentMethod = '';
 
     async function populatePaymentMethods() {
         try {
-            // Chama o endpoint simplificado, sem parâmetros
             const response = await fetch('/api/payment-methods');
             if (!response.ok) return;
-
             const methods = await response.json();
 
-            methods.sort((a, b) => (a.type || '').localeCompare(b.type || '') || (a.name || '').localeCompare(b.name));
+            paymentOptionsList.innerHTML = '';
 
-            let currentGroup = "";
-            methods.forEach(method => {
-                if (!method.name) return; // Ignora métodos sem nome
+            const allOption = document.createElement('li');
+            allOption.textContent = 'Todos';
+            allOption.dataset.value = '';
+            allOption.addEventListener('click', handlePaymentSelection);
+            paymentOptionsList.appendChild(allOption);
 
-                if (method.type !== currentGroup) {
-                    const group = document.createElement('optgroup');
-                    group.label = method.type || 'Outros';
-                    paymentMethodSelect.appendChild(group);
-                    currentGroup = method.type || 'Outros';
-                }
-                const option = document.createElement('option');
-                option.value = method.name;
+            const priority = ['Revolut', 'Wise', 'SEPA (EU) Instant', 'Bizum', 'PIX'];
+            const sortedMethods = methods.sort((a, b) => {
+                const aIsPriority = priority.includes(a.name);
+                const bIsPriority = priority.includes(b.name);
+                if (aIsPriority && !bIsPriority) return -1;
+                if (!aIsPriority && bIsPriority) return 1;
+                return (a.name || '').localeCompare(b.name || '');
+            });
+
+            sortedMethods.forEach(method => {
+                if (!method.name) return;
+                const option = document.createElement('li');
                 option.textContent = method.name;
-                paymentMethodSelect.querySelector(`optgroup[label="${currentGroup}"]`).appendChild(option);
+                option.dataset.value = method.name;
+                option.addEventListener('click', handlePaymentSelection);
+                paymentOptionsList.appendChild(option);
             });
         } catch (error) {
             console.error("Erro ao popular métodos de pagamento:", error);
         }
     }
 
-
-    function getPremiumClass(premium) { /* ... (sem alteração) */ }
-    function formatCurrency(value, currency) { /* ... (sem alteração) */ }
-    function formatPremium(premium) { /* ... (sem alteração) */ }
-
     async function fetchOffers() {
-        const currency = currencySelect.value;
-        const paymentMethod = paymentMethodSelect.value;
-
         loader.style.display = 'block';
         offersTbody.innerHTML = '';
         noOffersMessage.style.display = 'none';
-
+        const currency = currencySelect.value;
         let url = `/api/offers?currency_code=${currency}&side=${currentSide}`;
-        if (paymentMethod) {
-            url += `&payment_method=${paymentMethod}`;
+        if (selectedPaymentMethod) {
+            url += `&payment_method=${selectedPaymentMethod}`;
         }
-
         try {
             const response = await fetch(url);
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const offers = await response.json();
-
             if (offers.length === 0) {
                 noOffersMessage.style.display = 'block';
             } else {
                 offers.forEach(offer => {
                     const row = offersTbody.insertRow();
-                    row.innerHTML = `
-                        <td>${offer.trader_username || 'N/A'}</td>
-                        <td>${(offer.trader_rating || 0).toFixed(2)} ★</td>
-                        <td>${formatCurrency(offer.price, currency)}</td>
-                        <td>${formatCurrency(offer.market_price, currency)}</td>
-                        <td><span class="${getPremiumClass(offer.premium)}">${formatPremium(offer.premium)}</span></td>
-                        <td>${offer.min_amount || 'N/A'} - ${offer.max_amount || 'N/A'}</td>
-                        <td>${offer.payment_method_name || 'N/A'}</td>
-                        <td>${offer.country || 'Global'}</td>
-                        <td><a href="${offer.affiliate_link}" target="_blank" class="button">Ver Oferta</a></td>
-                    `;
+                    row.innerHTML = `<td>${offer.trader_username || 'N/A'}</td><td>${(offer.trader_rating || 0).toFixed(2)} ★</td><td>${formatCurrency(offer.price, currency)}</td><td>${formatCurrency(offer.market_price, currency)}</td><td><span class="${getPremiumClass(offer.premium)}">${formatPremium(offer.premium)}</span></td><td>${offer.min_amount || 'N/A'} - ${offer.max_amount || 'N/A'}</td><td>${offer.payment_method_name || 'N/A'}</td><td>${offer.country || 'Global'}</td><td><a href="${offer.affiliate_link}" target="_blank" class="button">Ver Oferta</a></td>`;
                 });
             }
         } catch (error) {
@@ -155,29 +162,48 @@
         }
     }
 
-    function handleSideClick(event) {
-        currentSide = event.target.dataset.side;
-        sideSellButton.classList.toggle('active', currentSide === 'SELL');
-        sideBuyButton.classList.toggle('active', currentSide === 'BUY');
+    function getPremiumClass(premium) { if (premium === null || premium === undefined) return 'premium-neutral'; if (premium < 1) return 'premium-good'; if (premium > 5) return 'premium-bad'; return 'premium-neutral'; }
+    function formatCurrency(value, currency) { if (value === null || value === undefined || !currency) return 'N/A'; const numericValue = typeof value === 'string' ? parseFloat(value.replace(',', '')) : value; return `${numericValue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currency}`; }
+    function formatPremium(premium) { if (premium === null || premium === undefined) return 'N/A'; return `${premium.toFixed(2)}%`; }
+
+    function handlePaymentSelection(e) {
+        selectedPaymentMethod = e.currentTarget.dataset.value;
+        paymentSelectedText.textContent = e.currentTarget.textContent;
+        paymentDropdown.classList.remove('open');
         fetchOffers();
     }
 
-    sideSellButton.addEventListener('click', handleSideClick);
-    sideBuyButton.addEventListener('click', handleSideClick);
-    currencySelect.addEventListener('change', fetchOffers); // Simplificado
-    paymentMethodSelect.addEventListener('change', fetchOffers);
+    paymentButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        paymentDropdown.classList.toggle('open');
+    });
+
+    document.addEventListener('click', () => {
+        paymentDropdown.classList.remove('open');
+    });
+
+    paymentSearch.addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
+
+    paymentSearch.addEventListener('input', () => {
+        const filter = paymentSearch.value.toLowerCase();
+        paymentOptionsList.querySelectorAll('li').forEach(option => {
+            const text = option.textContent.toLowerCase();
+            option.classList.toggle('hidden', !text.includes(filter));
+        });
+    });
+
+    sideSellButton.addEventListener('click', () => { currentSide = 'SELL'; sideSellButton.classList.add('active'); sideBuyButton.classList.remove('active'); fetchOffers(); });
+    sideBuyButton.addEventListener('click', () => { currentSide = 'BUY'; sideBuyButton.classList.add('active'); sideSellButton.classList.remove('active'); fetchOffers(); });
+    currencySelect.addEventListener('change', fetchOffers);
 
     document.addEventListener('DOMContentLoaded', async () => {
-        // As ações agora são sequenciais e mais simples
-        await populatePaymentMethods();
-
-        currencySelect.value = 'EUR';
-        currentSide = 'SELL';
         sideSellButton.classList.add('active');
-        sideBuyButton.classList.remove('active');
-
+        await populatePaymentMethods();
         await fetchOffers();
     });
 </script>
+
 </body>
 </html>

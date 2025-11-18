@@ -1,3 +1,4 @@
+/* --- GERAL E FONTES --- */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
 body {
@@ -6,8 +7,20 @@ body {
     color: #333;
     margin: 0;
     line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
+main {
+    flex-grow: 1;
+    max-width: 1200px;
+    width: 95%;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+/* --- CABEÇALHO --- */
 header {
     background-color: #0d1b2a;
     color: #fff;
@@ -20,12 +33,7 @@ header h1 {
     font-size: 2.5rem;
 }
 
-main {
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 0 2rem;
-}
-
+/* --- FILTROS --- */
 .filters {
     background-color: #fff;
     padding: 1.5rem;
@@ -33,135 +41,33 @@ main {
     margin-bottom: 2rem;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-end;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 1.5rem;
 }
 
-.filters div {
+.filters > div {
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    flex-direction: column;
 }
 
 .filters label {
     font-weight: 500;
+    font-size: 0.85rem;
+    margin-bottom: 0.25rem;
+    color: #333;
 }
 
-.filters select,
-.filters input[type="text"] {
+.filters select {
     padding: 8px 12px;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 1rem;
 }
 
-.filters input[type="text"] {
-    width: 200px;
-}
-
-.info-box {
-    background-color: #e0f7fa;
-    color: #00796b;
-    border: 1px solid #b2dfdb;
-    padding: 1rem;
-    border-radius: 8px;
-    text-align: center;
-    margin-bottom: 2rem;
-}
-
-.offers-container {
-    background-color: #fff;
-    border-radius: 8px;
-    overflow-x: auto;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    min-height: 150px; /* Para que o loader tenha espaço */
-    position: relative;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-th, td {
-    padding: 1rem;
-    text-align: left;
-    border-bottom: 1px solid #eee;
-}
-
-th {
-    background-color: #fafafa;
-    font-weight: 700;
-}
-
-tbody tr:hover {
-    background-color: #f9f9f9;
-}
-
-.button {
-    background-color: #ff9900;
-    color: #fff !important; /* Forçar a cor do texto */
-    padding: 8px 16px;
-    border-radius: 4px;
-    text-decoration: none;
-    font-weight: 500;
-    transition: background-color 0.2s;
-    display: inline-block;
-}
-
-.button:hover {
-    background-color: #e68a00;
-}
-
-.no-offers {
-    padding: 2rem;
-    text-align: center;
-    color: #777;
-}
-
-footer {
-    text-align: center;
-    margin-top: 3rem;
-    padding: 1rem;
-    color: #777;
-}
-
-/* Estilos para o Loader */
-.loader {
-    border: 5px solid #f3f3f3; /* Light grey */
-    border-top: 5px solid #ff9900; /* Orange */
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
-    margin: 3rem auto;
-    display: none; /* Começa escondido */
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* Estilos para a coluna de Prémio */
-.premium-good {
-    color: #2e7d32; /* Verde escuro */
-    font-weight: 700;
-}
-
-.premium-bad {
-    color: #c62828; /* Vermelho escuro */
-    font-weight: 700;
-}
-
-.premium-neutral {
-    color: #555;
-}
-
-/* Estilos para o seletor de Compra/Venda */
+/* Seletor de Compra/Venda */
 .side-selector {
-    display: flex;
+    flex-direction: row !important;
     border: 1px solid #ddd;
     border-radius: 6px;
     overflow: hidden;
@@ -189,4 +95,178 @@ footer {
 
 .side-button:not(.active):hover {
     background-color: #f5f5f5;
+}
+
+/* --- DROPDOWN PERSONALIZADO --- */
+.custom-dropdown {
+    position: relative;
+    width: 250px;
+}
+
+.dropdown-button {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    background-color: #fff;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.dropdown-button::after {
+    content: '▼';
+    font-size: 0.7rem;
+    color: #777;
+    transition: transform 0.2s;
+}
+
+.custom-dropdown.open .dropdown-button::after {
+    transform: rotate(180deg);
+}
+
+.dropdown-menu {
+    display: none; /* Começa escondido para evitar o "flash" */
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.custom-dropdown.open .dropdown-menu {
+    display: block;
+}
+
+.dropdown-search {
+    padding: 0.5rem;
+    border-bottom: 1px solid #eee;
+}
+
+.dropdown-search input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.dropdown-options {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.dropdown-options li {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+}
+
+.dropdown-options li:hover, .dropdown-options li.selected {
+    background-color: #f5f5f5;
+}
+
+.dropdown-options li.hidden {
+    display: none;
+}
+
+
+/* --- TABELA DE OFERTAS --- */
+.info-box {
+    background-color: #e0f7fa;
+    color: #00796b;
+    border: 1px solid #b2dfdb;
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.offers-container {
+    background-color: #fff;
+    border-radius: 8px;
+    overflow-x: auto;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    min-height: 150px;
+    position: relative;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+th {
+    background-color: #fafafa;
+    font-weight: 700;
+}
+
+tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+.button {
+    background-color: #ff9900;
+    color: #fff !important;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    display: inline-block;
+}
+
+.button:hover {
+    background-color: #e68a00;
+}
+
+/* Cores do Prémio */
+.premium-good { color: #2e7d32; font-weight: 700; }
+.premium-bad { color: #c62828; font-weight: 700; }
+.premium-neutral { color: #555; }
+
+/* --- ELEMENTOS DE ESTADO (LOADER, MENSAGENS) --- */
+.loader {
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #ff9900;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 3rem auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.no-offers {
+    padding: 2rem;
+    text-align: center;
+    color: #777;
+}
+
+/* --- RODAPÉ --- */
+footer {
+    text-align: center;
+    margin-top: 3rem;
+    padding: 1rem;
+    color: #777;
 }
